@@ -1,9 +1,8 @@
-public class Main{
+import Presentation.Menu;
+import javafx.application.Application;
 
-    public static void main(String[] args){
-
-        System.out.println("habla");
+public class Main {
+    public static void main(String[] args) {
+        Application.launch(Menu.class, args);
     }
-
-
 }
