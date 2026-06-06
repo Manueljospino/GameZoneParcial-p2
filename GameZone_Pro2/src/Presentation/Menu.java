@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-public class MenuPrincipal extends Application {
+public class Menu extends Application {
 
 
     private final VideoGameRepository videoGameRepo = new VideoGameRepository();
