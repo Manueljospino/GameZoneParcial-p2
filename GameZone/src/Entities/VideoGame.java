@@ -1,57 +1,45 @@
 package Entities;
 
 public abstract class VideoGame {
-   private String title;
-   private double basePrice;
-   private int stock;
-   private  String platform;
 
-    public VideoGame(String title, double basePrice, int stock, String platform) {
+    protected String title;
+    protected double price;
+    protected String platform;
+    protected int stock;
+    protected String genre;
+
+    public VideoGame(String title, double price, String platform, int stock, String genre) {
         this.title = title;
-        this.basePrice = basePrice;
-        this.stock = stock;
+        this.price = price;
         this.platform = platform;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public double getBasePrice() {
-        return basePrice;
-    }
-
-    public void setBasePrice(double basePrice) {
-        this.basePrice = basePrice;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
         this.stock = stock;
+        this.genre = genre;
     }
 
-    public String getPlatform() {
-        return platform;
-    }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
+    public String getTitle()    { return title; }
+    public double getPrice()    { return price; }
+    public String getPlatform() { return platform; }
+    public int getStock()       { return stock; }
+    public String getGenre()    { return genre; }
+
+
+    public void setTitle(String title)       { this.title = title; }
+    public void setPrice(double price)       { this.price = price; }
+    public void setPlatform(String platform) { this.platform = platform; }
+    public void setStock(int stock)          { this.stock = stock; }
+    public void setGenre(String genre)       { this.genre = genre; }
+
+
 
     @Override
     public String toString() {
         return "VideoGame{" +
                 "title='" + title + '\'' +
-                ", basePrice=" + basePrice +
-                ", stock=" + stock +
+                ", price=" + price +
                 ", platform='" + platform + '\'' +
+                ", stock=" + stock +
+                ", genre='" + genre + '\'' +
                 '}';
     }
 
