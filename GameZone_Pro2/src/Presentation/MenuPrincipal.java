@@ -13,7 +13,6 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -28,7 +27,7 @@ import java.util.List;
 
 public class MenuPrincipal extends Application {
 
-    // ── Services ──────────────────────────────────────────────────────────
+
     private final VideoGameRepository videoGameRepo = new VideoGameRepository();
     private final SaleRepository      saleRepo      = new SaleRepository();
     private final VideoGameService    gameService   = new VideoGameService(videoGameRepo);
@@ -36,14 +35,10 @@ public class MenuPrincipal extends Application {
 
     private TableView<VideoGame> tableView;
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  START
-    // ═════════════════════════════════════════════════════════════════════
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("🎮 GameZone — Sistema de Gestión");
 
-        // ── Sidebar buttons ───────────────────────────────────────────────
         Button btnAdd      = menuButton("➕  Agregar Videojuego");
         Button btnList     = menuButton("📋  Listar Todos");
         Button btnSearch   = menuButton("🔍  Buscar por Título");
@@ -59,7 +54,7 @@ public class MenuPrincipal extends Application {
         sidebar.setPrefWidth(220);
         sidebar.setStyle("-fx-background-color:#1a1a2e;");
 
-        // ── Main content ──────────────────────────────────────────────────
+
         tableView = buildGameTable();
 
         Label title = new Label("SISTEMA DE GESTIÓN — GAMEZONE");
@@ -74,7 +69,6 @@ public class MenuPrincipal extends Application {
         HBox root = new HBox(sidebar, content);
         HBox.setHgrow(content, Priority.ALWAYS);
 
-        // ── Actions ───────────────────────────────────────────────────────
         btnAdd.setOnAction(e      -> showAddDialog(primaryStage));
         btnList.setOnAction(e     -> loadAllGames());
         btnSearch.setOnAction(e   -> showSearchByTitleDialog(primaryStage));
@@ -89,9 +83,6 @@ public class MenuPrincipal extends Application {
         primaryStage.show();
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  1. ADD VIDEO GAME
-    // ═════════════════════════════════════════════════════════════════════
     private void showAddDialog(Stage owner) {
         Stage dialog = dialog(owner, "Agregar Videojuego", 460, 540);
 
@@ -105,13 +96,13 @@ public class MenuPrincipal extends Application {
         TextField tfStock    = field("Stock");
         TextField tfGenre    = field("Género");
 
-        // Digital fields
+
         TextField tfSize     = field("Tamaño en GB");
         TextField tfDownload = field("Plataforma de descarga");
         VBox digitalBox = new VBox(5, label("Tamaño (GB)"), tfSize,
                 label("Plataforma de descarga"), tfDownload);
 
-        // Physical fields
+
         TextField tfCondition   = field("nuevo / usado");
         TextField tfDistributor = field("Distribuidor");
         VBox physicalBox = new VBox(5, label("Condición (nuevo/usado)"), tfCondition,
@@ -150,11 +141,11 @@ public class MenuPrincipal extends Application {
                 dialog.close();
                 alert(Alert.AlertType.INFORMATION, "Éxito", "Videojuego agregado correctamente.");
 
-            } catch (IllegalArgumentException ex) {
-                alert(Alert.AlertType.WARNING, "Atención", ex.getMessage());
             } catch (NumberFormatException ex) {
                 alert(Alert.AlertType.ERROR, "Error de formato",
                         "Precio, stock y tamaño deben ser números válidos.");
+            } catch (IllegalArgumentException ex) {
+                alert(Alert.AlertType.WARNING, "Atención", ex.getMessage());
             }
         });
 
@@ -177,16 +168,10 @@ public class MenuPrincipal extends Application {
         dialog.show();
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  2. LIST ALL
-    // ═════════════════════════════════════════════════════════════════════
     private void loadAllGames() {
         tableView.setItems(FXCollections.observableArrayList(gameService.getAllVideoGames()));
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  3. SEARCH BY TITLE
-    // ═════════════════════════════════════════════════════════════════════
     private void showSearchByTitleDialog(Stage owner) {
         Stage dialog = dialog(owner, "Buscar por Título", 400, 160);
         TextField tfTitle  = field("Ingrese el título exacto");
@@ -210,9 +195,6 @@ public class MenuPrincipal extends Application {
         dialog.show();
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  4. SEARCH BY PLATFORM
-    // ═════════════════════════════════════════════════════════════════════
     private void showSearchByPlatformDialog(Stage owner) {
         Stage dialog = dialog(owner, "Buscar por Plataforma", 400, 160);
         TextField tfPlatform = field("Ej: PC, PS5, Xbox");
@@ -236,9 +218,6 @@ public class MenuPrincipal extends Application {
         dialog.show();
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  5. SELL
-    // ═════════════════════════════════════════════════════════════════════
     private void showSellDialog(Stage owner) {
         Stage dialog = dialog(owner, "Realizar Venta", 400, 210);
         TextField tfTitle = field("Título del videojuego");
@@ -254,10 +233,12 @@ public class MenuPrincipal extends Application {
                 dialog.close();
                 alert(Alert.AlertType.INFORMATION, "Venta Exitosa",
                         String.format("✅ Total de la venta: $%.2f", total));
-            } catch (IllegalArgumentException ex) {
-                alert(Alert.AlertType.WARNING, "No se pudo realizar la venta", ex.getMessage());
+                // ✅ DESPUÉS — NumberFormatException primero
             } catch (NumberFormatException ex) {
-                alert(Alert.AlertType.ERROR, "Error", "La cantidad debe ser un número entero.");
+                alert(Alert.AlertType.ERROR, "Error de formato",
+                        "Precio, stock y tamaño deben ser números válidos.");
+            } catch (IllegalArgumentException ex) {
+                alert(Alert.AlertType.WARNING, "Atención", ex.getMessage());
             }
         });
 
@@ -271,9 +252,6 @@ public class MenuPrincipal extends Application {
         dialog.show();
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  6. SHOW SALES
-    // ═════════════════════════════════════════════════════════════════════
     private void showSalesWindow(Stage owner) {
         Stage window = dialog(owner, "📊 Ventas Realizadas", 720, 420);
 
@@ -299,10 +277,6 @@ public class MenuPrincipal extends Application {
         window.setScene(new Scene(box, 720, 420));
         window.show();
     }
-
-    // ═════════════════════════════════════════════════════════════════════
-    //  MAIN GAME TABLE  (with right-click Update / Delete)
-    // ═════════════════════════════════════════════════════════════════════
     @SuppressWarnings("unchecked")
     private TableView<VideoGame> buildGameTable() {
         TableView<VideoGame> table = new TableView<>();
@@ -343,9 +317,6 @@ public class MenuPrincipal extends Application {
         return table;
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  UPDATE DIALOG
-    // ═════════════════════════════════════════════════════════════════════
     private void showUpdateDialog(VideoGame game) {
         Stage dialog = new Stage();
         dialog.setTitle("Actualizar — " + game.getTitle());
@@ -385,9 +356,6 @@ public class MenuPrincipal extends Application {
         dialog.show();
     }
 
-    // ═════════════════════════════════════════════════════════════════════
-    //  UI HELPERS
-    // ═════════════════════════════════════════════════════════════════════
     private Button menuButton(String text) {
         Button b = new Button(text);
         b.setMaxWidth(Double.MAX_VALUE);

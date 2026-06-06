@@ -15,14 +15,10 @@ public class VideoGameRepository implements IVideoGameRepository {
 
     private static final String FILE_PATH = "data/videogames.json";
 
-    // ─────────────────────────────────────────────
-    //  SAVE  (Create)
-    // ─────────────────────────────────────────────
     @Override
     public void save(VideoGame videoGame) {
         List<VideoGame> games = findAll();
 
-        // Duplicate title check (case-insensitive) → throws for UI alert
         for (VideoGame g : games) {
             if (g.getTitle().equalsIgnoreCase(videoGame.getTitle())) {
                 throw new IllegalArgumentException("El videojuego ya existe en el catálogo");
@@ -33,9 +29,6 @@ public class VideoGameRepository implements IVideoGameRepository {
         writeAll(games);
     }
 
-    // ─────────────────────────────────────────────
-    //  FIND ALL  (Read)
-    // ─────────────────────────────────────────────
     @Override
     public List<VideoGame> findAll() {
         List<VideoGame> games = new ArrayList<>();
@@ -49,14 +42,11 @@ public class VideoGameRepository implements IVideoGameRepository {
                 if (game != null) games.add(game);
             }
         } catch (Exception e) {
-            System.err.println("Error reading videogames.json: " + e.getMessage());
+            System.err.println("Error al leer videojuegos.json: " + e.getMessage());
         }
         return games;
     }
 
-    // ─────────────────────────────────────────────
-    //  FIND BY TITLE  (case-insensitive)
-    // ─────────────────────────────────────────────
     @Override
     public VideoGame findByTitle(String title) {
         for (VideoGame g : findAll()) {
@@ -65,9 +55,6 @@ public class VideoGameRepository implements IVideoGameRepository {
         return null;
     }
 
-    // ─────────────────────────────────────────────
-    //  FIND BY PLATFORM  (case-insensitive)
-    // ─────────────────────────────────────────────
     @Override
     public List<VideoGame> findByPlatform(String platform) {
         List<VideoGame> result = new ArrayList<>();
@@ -77,9 +64,6 @@ public class VideoGameRepository implements IVideoGameRepository {
         return result.isEmpty() ? null : result;
     }
 
-    // ─────────────────────────────────────────────
-    //  UPDATE
-    // ─────────────────────────────────────────────
     @Override
     public void update(String title, VideoGame updatedVideoGame) {
         List<VideoGame> games = findAll();
@@ -91,24 +75,17 @@ public class VideoGameRepository implements IVideoGameRepository {
                 break;
             }
         }
-        if (!found) throw new IllegalArgumentException("Video game not found: " + title);
+        if (!found) throw new IllegalArgumentException("Videojuego no encontrado: " + title);
         writeAll(games);
     }
 
-    // ─────────────────────────────────────────────
-    //  DELETE
-    // ─────────────────────────────────────────────
     @Override
     public void delete(String title) {
         List<VideoGame> games = findAll();
         boolean removed = games.removeIf(g -> g.getTitle().equalsIgnoreCase(title));
-        if (!removed) throw new IllegalArgumentException("Video game not found: " + title);
+        if (!removed) throw new IllegalArgumentException("Videojuego no encontrado: " + title);
         writeAll(games);
     }
-
-    // ─────────────────────────────────────────────
-    //  PRIVATE HELPERS
-    // ─────────────────────────────────────────────
 
     @SuppressWarnings("unchecked")
     private void writeAll(List<VideoGame> games) {
@@ -118,23 +95,20 @@ public class VideoGameRepository implements IVideoGameRepository {
         try (FileWriter writer = new FileWriter(FILE_PATH)) {
             writer.write(array.toJSONString());
         } catch (IOException e) {
-            System.err.println("Error writing videogames.json: " + e.getMessage());
+            System.err.println("Error al guardar videojuegos.json: " + e.getMessage());
         }
     }
 
-    /** VideoGame → JSONObject. Fields match exactly the entity constructors. */
     @SuppressWarnings("unchecked")
     private JSONObject toJson(VideoGame g) {
         JSONObject json = new JSONObject();
-        // Common fields (VideoGame)
         json.put("type",     g instanceof DigitalVideoGame ? "digital" : "physical");
         json.put("title",    g.getTitle());
-        json.put("price",    g.getPrice());        // field is "price" in the entity
+        json.put("price",    g.getPrice());
         json.put("platform", g.getPlatform());
         json.put("stock",    g.getStock());
         json.put("genre",    g.getGenre());
 
-        // Subclass-specific fields
         if (g instanceof DigitalVideoGame dg) {
             json.put("sizeGB",           dg.getSizeGB());
             json.put("downloadPlatform", dg.getDownloadPlatform());
@@ -145,7 +119,6 @@ public class VideoGameRepository implements IVideoGameRepository {
         return json;
     }
 
-    /** JSONObject → correct VideoGame subclass using exact constructor signatures. */
     private VideoGame parseVideoGame(JSONObject json) {
         try {
             String type     = (String) json.get("type");
@@ -156,21 +129,16 @@ public class VideoGameRepository implements IVideoGameRepository {
             String genre    = (String) json.get("genre");
 
             if ("digital".equals(type)) {
-                // DigitalVideoGame(String title, double price, String platform,
-                //                  int stock, String genre, double sizeGB, String downloadPlatform)
                 double sizeGB           = ((Number) json.get("sizeGB")).doubleValue();
                 String downloadPlatform = (String) json.get("downloadPlatform");
                 return new DigitalVideoGame(title, price, platform, stock, genre, sizeGB, downloadPlatform);
-
             } else {
-                // PhysicalVideoGame(String title, double price, String platform,
-                //                   int stock, String genre, String condition, String distributor)
                 String condition   = (String) json.get("condition");
                 String distributor = (String) json.get("distributor");
                 return new PhysicalVideoGame(title, price, platform, stock, genre, condition, distributor);
             }
         } catch (Exception e) {
-            System.err.println("Error parsing game entry: " + e.getMessage());
+            System.err.println("Error al procesar entrada de videojuego: " + e.getMessage());
             return null;
         }
     }

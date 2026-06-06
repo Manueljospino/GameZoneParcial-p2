@@ -6,7 +6,7 @@ import Entities.interfaces.Sellable;
 
 public class PhysicalVideoGame extends VideoGame implements Sellable, Displayable {
 
-    private String condition;    // "nuevo" o "usado"
+    private String condition;
     private String distributor;
 
     public PhysicalVideoGame(String title, double price, String platform, int stock,
@@ -27,7 +27,7 @@ public class PhysicalVideoGame extends VideoGame implements Sellable, Displayabl
     @Override
     public double calculateFinalPrice() {
         if ("usado".equalsIgnoreCase(condition)) {
-            return price * 0.75; // 25% de descuento
+            return price * 0.75;
         }
         return price;
     }

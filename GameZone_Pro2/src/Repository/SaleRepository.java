@@ -16,9 +16,6 @@ public class SaleRepository implements ISaleRepository {
 
     private static final String FILE_PATH = "data/sales.json";
 
-    // ─────────────────────────────────────────────
-    //  SAVE
-    // ─────────────────────────────────────────────
     @Override
     public void save(Sale sale) {
         List<Sale> sales = findAll();
@@ -26,9 +23,6 @@ public class SaleRepository implements ISaleRepository {
         writeAll(sales);
     }
 
-    // ─────────────────────────────────────────────
-    //  FIND ALL
-    // ─────────────────────────────────────────────
     @Override
     public List<Sale> findAll() {
         List<Sale> sales = new ArrayList<>();
@@ -42,14 +36,10 @@ public class SaleRepository implements ISaleRepository {
                 if (sale != null) sales.add(sale);
             }
         } catch (Exception e) {
-            System.err.println("Error reading sales.json: " + e.getMessage());
+            System.err.println("Error al leer ventas.json: " + e.getMessage());
         }
         return sales;
     }
-
-    // ─────────────────────────────────────────────
-    //  PRIVATE HELPERS
-    // ─────────────────────────────────────────────
 
     @SuppressWarnings("unchecked")
     private void writeAll(List<Sale> sales) {
@@ -59,11 +49,10 @@ public class SaleRepository implements ISaleRepository {
         try (FileWriter writer = new FileWriter(FILE_PATH)) {
             writer.write(array.toJSONString());
         } catch (IOException e) {
-            System.err.println("Error writing sales.json: " + e.getMessage());
+            System.err.println("Error al guardar ventas.json: " + e.getMessage());
         }
     }
 
-    /** Sale → JSONObject. Stores enough data to reconstruct the sale for display. */
     @SuppressWarnings("unchecked")
     private JSONObject toJson(Sale s) {
         JSONObject json = new JSONObject();
@@ -77,20 +66,14 @@ public class SaleRepository implements ISaleRepository {
         return json;
     }
 
-    /**
-     * JSONObject → Sale.
-     * We rebuild a minimal VideoGame stub (title + unitPrice only) so we don't
-     * duplicate full game data. The Presentation layer only needs the title to display.
-     */
     private Sale parseSale(JSONObject json) {
         try {
-            String id         = (String) json.get("id");
-            String gameTitle  = (String) json.get("videoGameTitle");
-            String gameType   = (String) json.get("videoGameType");
-            int    quantity   = ((Number) json.get("quantity")).intValue();
-            double unitPrice  = ((Number) json.get("unitPrice")).doubleValue();
+            String id        = (String) json.get("id");
+            String gameTitle = (String) json.get("videoGameTitle");
+            String gameType  = (String) json.get("videoGameType");
+            int    quantity  = ((Number) json.get("quantity")).intValue();
+            double unitPrice = ((Number) json.get("unitPrice")).doubleValue();
 
-            // Minimal stub — only title and price matter for sales history display
             VideoGame stub;
             if ("digital".equals(gameType)) {
                 stub = new DigitalVideoGame(gameTitle, unitPrice, "", 0, "", 0, "");
@@ -100,7 +83,7 @@ public class SaleRepository implements ISaleRepository {
 
             return new Sale(id, stub, quantity, unitPrice);
         } catch (Exception e) {
-            System.err.println("Error parsing sale entry: " + e.getMessage());
+            System.err.println("Error al procesar registro de venta: " + e.getMessage());
             return null;
         }
     }

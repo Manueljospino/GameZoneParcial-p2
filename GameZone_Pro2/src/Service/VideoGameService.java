@@ -13,75 +13,53 @@ public class VideoGameService implements IVideoGameService {
         this.repository = repository;
     }
 
-    // ─────────────────────────────────────────────
-    //  ADD VIDEO GAME  — BR validations (Image 3)
-    // ─────────────────────────────────────────────
     @Override
     public void addVideoGame(VideoGame videoGame) {
-        // BR-01: title must not be null or empty
         if (videoGame.getTitle() == null || videoGame.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be null or empty.");
+            throw new IllegalArgumentException("El título no puede ser nulo o vacío.");
         }
-        // BR-02: price must be greater than 0
         if (videoGame.getPrice() <= 0) {
-            throw new IllegalArgumentException("Price must be greater than 0.");
+            throw new IllegalArgumentException("El precio debe ser mayor a 0.");
         }
-        // BR-03: stock must be >= 0
         if (videoGame.getStock() < 0) {
-            throw new IllegalArgumentException("Stock must be 0 or greater.");
+            throw new IllegalArgumentException("El stock debe ser mayor o igual a 0.");
         }
-        // Duplicate-title check is delegated to the repository (throws → UI alert)
         repository.save(videoGame);
     }
 
-    // ─────────────────────────────────────────────
-    //  GET ALL
-    // ─────────────────────────────────────────────
     @Override
     public List<VideoGame> getAllVideoGames() {
         return repository.findAll();
     }
 
-    // ─────────────────────────────────────────────
-    //  SEARCH BY TITLE  (case-insensitive)
-    // ─────────────────────────────────────────────
     @Override
     public VideoGame searchByTitle(String title) {
         return repository.findByTitle(title);
     }
 
-    // ─────────────────────────────────────────────
-    //  SEARCH BY PLATFORM  (case-insensitive)
-    // ─────────────────────────────────────────────
     @Override
     public List<VideoGame> searchByPlatform(String platform) {
         return repository.findByPlatform(platform);
     }
 
-    // ─────────────────────────────────────────────
-    //  UPDATE
-    // ─────────────────────────────────────────────
     @Override
     public void updateVideoGame(String title, VideoGame updatedVideoGame) {
         if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title to search cannot be null or empty.");
+            throw new IllegalArgumentException("El título a buscar no puede ser nulo o vacío.");
         }
         if (updatedVideoGame.getPrice() <= 0) {
-            throw new IllegalArgumentException("Updated price must be greater than 0.");
+            throw new IllegalArgumentException("El precio actualizado debe ser mayor a 0.");
         }
         if (updatedVideoGame.getStock() < 0) {
-            throw new IllegalArgumentException("Updated stock must be 0 or greater.");
+            throw new IllegalArgumentException("El stock actualizado debe ser mayor o igual a 0.");
         }
         repository.update(title, updatedVideoGame);
     }
 
-    // ─────────────────────────────────────────────
-    //  DELETE
-    // ─────────────────────────────────────────────
     @Override
     public void deleteVideoGame(String title) {
         if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be null or empty.");
+            throw new IllegalArgumentException("El título no puede ser nulo o vacío.");
         }
         repository.delete(title);
     }

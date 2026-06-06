@@ -20,6 +20,8 @@ public class Sale {
         this.saleDate = LocalDateTime.now();
     }
 
+    public String getVideoGameTitle() { return videoGame.getTitle(); }
+
     // Getters
     public String getId()               { return id; }
     public VideoGame getVideoGame()     { return videoGame; }
